@@ -1,11 +1,7 @@
 # PRACTICAS LAB
-
 ASIGNATURA SISTEMAS INFORMATICOS INDUSTRIALES
-
-LABORATORIO DEL DIA 15/10/2016
-
 MODIFICACION DEL README
 
-HOLAAAAAAAAAAAAA
+Utilizaremos este repositorio para familiarizarnos con el sistema operativo LINUX
 
-FIN
+Silvia Mera
