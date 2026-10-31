@@ -1,5 +1,9 @@
 # PRACTICAS LAB
+<<<<<<< HEAD
 ASIGNATURA: SISTEMAS INFORMATICOS INDUSTRIALES
+=======
+ASIGNATURA SISTEMAS INFORMATICOS INDUSTRIALES
+>>>>>>> 8d95dc0dc3747048658b5eb0a80db47ff79a6df7
 MODIFICACION DEL README
 
 Utilizaremos este repositorio para familiarizarnos con el sistema operativo LINUX
