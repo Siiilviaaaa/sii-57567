@@ -144,8 +144,16 @@ void CMundo::OnTimer(int value)
 		
 	//DATOS NUEVOS POR LA TUBERIA:
 	char puntos_fifo[100];
-	sprintf(puntos_fifo, "Jugador 1: %d | Jugador 2: %d",puntos1,puntos2);
-	write(FIFO,puntos_fifo,sizeof(puntos_fifo));
+	int n = sprintf(puntos_fifo, "Jugador 1: %d | Jugador 2: %d",puntos1,puntos2);
+	write(FIFO,puntos_fifo,n);
+	
+	//COMPROBAR GANADOR (3 PUNTOS)
+	if (puntos2>=3)
+	{
+		close(FIFO);
+		exit(0);
+	}
+	
 	}
 
 	if(fondo_dcho.Rebota(esfera))
@@ -158,8 +166,16 @@ void CMundo::OnTimer(int value)
 		
 	//DATOS NUEVOS POR LA TUBERIA:
 	char puntos_fifo[100];
-	sprintf(puntos_fifo, "Jugador 1: %d | Jugador 2: %d",puntos1,puntos2);
-	write(FIFO,puntos_fifo,sizeof(puntos_fifo));
+	int n = sprintf(puntos_fifo, "Jugador 1: %d | Jugador 2: %d",puntos1,puntos2);
+	write(FIFO,puntos_fifo,n);
+	
+	//COMPROBAR GANADOR (3 PUNTOS)
+	if (puntos1>=3)
+	{
+		close(FIFO);
+		exit(0);
+	}
+	
 	}
 
 }
