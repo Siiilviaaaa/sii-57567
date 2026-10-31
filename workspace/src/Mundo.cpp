@@ -10,6 +10,10 @@
 #include <string.h>
 #include <math.h>
 
+//INCLUIR LIBRERIAS PARA LA FIFO
+#include <fcntl.h>
+#include <unistd.h>
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -21,7 +25,9 @@ CMundo::CMundo()
 
 CMundo::~CMundo()
 {
-
+	if (FIFO>0){
+	close(FIFO);
+	}
 }
 
 void CMundo::InitGL()
@@ -135,6 +141,11 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=2+2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=2+2*rand()/(float)RAND_MAX;
 		puntos2++;
+		
+	//DATOS NUEVOS POR LA TUBERIA:
+	char puntos_fifo[100];
+	sprintf(puntos_fifo, "Jugador 1: %d | Jugador 2: %d",puntos1,puntos2);
+	write(FIFO,puntos_fifo,sizeof(puntos_fifo));
 	}
 
 	if(fondo_dcho.Rebota(esfera))
@@ -144,6 +155,11 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=-2-2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=-2-2*rand()/(float)RAND_MAX;
 		puntos1++;
+		
+	//DATOS NUEVOS POR LA TUBERIA:
+	char puntos_fifo[100];
+	sprintf(puntos_fifo, "Jugador 1: %d | Jugador 2: %d",puntos1,puntos2);
+	write(FIFO,puntos_fifo,sizeof(puntos_fifo));
 	}
 
 }
@@ -192,4 +208,7 @@ void CMundo::Init()
 	jugador2.g=0;
 	jugador2.x1=6;jugador2.y1=-1;
 	jugador2.x2=6;jugador2.y2=1;
+	
+//AÑADIR LA FIFO
+FIFO=open("fifo",O_WRONLY);
 }
