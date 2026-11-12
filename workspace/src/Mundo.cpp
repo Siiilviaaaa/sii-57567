@@ -14,6 +14,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+//LIBRERIAS MEMORIA COMPARTIDA
+#include <sys/mman.h>
+#include <sys/stat.h>
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -177,6 +181,18 @@ void CMundo::OnTimer(int value)
 	}
 	
 	}
+	
+// ACTUALIZAR DATOS
+datos->esfera = esfera;
+datos->raqueta1 = jugador1;
+
+// EJECUTAR BOT
+if (datos->accion == 1)
+    OnKeyboardDown('w', 0, 0);
+else if (datos->accion == -1)
+    OnKeyboardDown('s', 0, 0);
+else
+    jugador1.velocidad.y = 0;
 
 }
 
@@ -224,6 +240,38 @@ void CMundo::Init()
 	jugador2.g=0;
 	jugador2.x1=6;jugador2.y1=-1;
 	jugador2.x2=6;jugador2.y2=1;
+	
+// CREAR FICHERO DE MEMORIA COMPARTIDA
+int fd_mem = open("/tmp/tenis_memoria", O_RDWR | O_CREAT, 0666);
+
+if (fd_mem == -1)
+{
+    perror("Error al abrir el fichero de memoria compartida");
+    exit(1);
+}
+
+if (ftruncate(fd_mem, sizeof(DatosMemCompartida)) == -1)
+{
+    perror("Error en ftruncate");
+    close(fd_mem);
+    exit(1);
+}
+
+// PROYECTAR EL FICHERO EN MEMORIA
+void *direccion = mmap(NULL, sizeof(DatosMemCompartida),
+                       PROT_READ | PROT_WRITE,
+                       MAP_SHARED, fd_mem, 0);
+
+close(fd_mem);
+
+if (direccion == MAP_FAILED)
+{
+    perror("Error en mmap");
+    exit(1);
+}
+
+// ASIGNAR LA DIRECCION AL PUNTERO
+datos = (DatosMemCompartida *)direccion;
 	
 //AÑADIR LA FIFO
 FIFO=open("fifo",O_WRONLY);
