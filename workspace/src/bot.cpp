@@ -1,52 +1,44 @@
-#include "DatosMemCompartida.h"
-
-#include <iostream>
 #include <fcntl.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include "DatosMemCompartida.h"
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-using namespace std;
-
-int main()
+int main(int argc,char* argv[])
 {
-    // ABRIR EL FICHERO DE MEMORIA COMPARTIDA
-    int fd = open("/tmp/tenis_memoria", O_RDWR);
+	int i;
+	DatosMemCompartida* dat;
+	char *direccion;
+	int fd;
+	
+	fd=open("/tmp/tenis_memoria", O_RDWR);
+	if (fd == -1)
+	{
+		perror("Error al abrir el archivo"); 
+		return 1;
+	}
+	direccion=(char*)mmap(NULL, sizeof(DatosMemCompartida), PROT_READ | PROT_WRITE,MAP_SHARED, fd, 0);
+	if (direccion == MAP_FAILED)
+	{
+		perror("Error en la proyeccion mmap"); 
+		return 1;
+	}
+	close(fd);
+	dat=(DatosMemCompartida*)direccion;
 
-    if (fd == -1)
-    {
-        perror("Error al abrir el fichero");
-        exit(1);
-    }
-
-    // PROYECTAR EL FICHERO EN MEMORIA
-    void *direccion = mmap(NULL, sizeof(DatosMemCompartida),
-                           PROT_READ | PROT_WRITE,
-                           MAP_SHARED, fd, 0);
-
-    close(fd);
-
-    if (direccion == MAP_FAILED)
-    {
-        perror("Error en mmap");
-        exit(1);
-    }
-
-    DatosMemCompartida *datos = (DatosMemCompartida *)direccion;
-
-    // BUCLE PRINCIPAL DEL BOT
-    while (true)
-    {
-        if (datos->esfera.centro.y > datos->raqueta1.y1)
-            datos->accion = 1;
-        else if (datos->esfera.centro.y < datos->raqueta1.y1)
-            datos->accion = -1;
-        else
-            datos->accion = 0;
-
-        usleep(25000);
-    }
-
-    return 0;
+	while(1)
+	{
+		usleep(25000);
+		if (dat->esfera.centro.y > dat->raqueta1.y1)
+    			dat->accion = 1;
+		else if (dat->esfera.centro.y < dat->raqueta1.y1)
+   			dat->accion = -1;
+		else		
+    			dat->accion = 0;
+	}
+	return 0;
 }
